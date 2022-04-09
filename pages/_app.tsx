@@ -1,8 +1,9 @@
-import '../styles/globals.css'
 import type { AppProps } from 'next/app'
-
-function MyApp({ Component, pageProps }: AppProps) {
+import { wrapper } from '../features/store'
+import '../styles/global.css'
+import React from 'react'
+const App = function ({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />
 }
 
-export default MyApp
+export default wrapper.withRedux(App)
