@@ -9,6 +9,10 @@ const postsService = {
   getPost: async (id: number) => {
     return await axiosClient.get(`${url}/${id}`)
   },
+  getPostIds: async () => {
+    let resp = await axiosClient.get(`${url}/ids`)
+    return resp.data
+  },
 }
-
+// https://local-rad-stack.com/api/v1/arts/ids
 export default postsService

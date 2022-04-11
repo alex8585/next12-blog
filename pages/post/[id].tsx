@@ -1,4 +1,8 @@
-import type { GetStaticProps, InferGetStaticPropsType } from 'next'
+import type {
+  GetStaticPaths,
+  GetStaticProps,
+  InferGetStaticPropsType,
+} from 'next'
 import { useEffect, FC, useMemo, useState, ChangeEvent } from 'react'
 import postService from '../../services/posts'
 import { useAppDispatch, useAppSelector } from '../../features/hooks'
@@ -25,41 +29,27 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AgricultureIcon from '@mui/icons-material/Agriculture'
 import FrontendLayout from 'components/FrontendLayout'
 
+import postsService from '../../services/posts'
 import CardMedia from '@mui/material/CardMedia'
 import CardActions from '@mui/material/CardActions'
 import { useRouter } from 'next/router'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
-const Post: FC<InferGetStaticPropsType<typeof getStaticProps>> = () => {
+const Post: FC<InferGetStaticPropsType<any>> = () => {
   const dispatch = useAppDispatch()
   const router = useRouter()
   const post = useAppSelector(selectPost)
   const postLoading = useAppSelector((state) => state.posts.loading)
 
-  const id = router.query.id
-
-  //console.log(page)
-  console.log(post)
+  const id = router.query.id ? parseInt(router.query.id as string) : null
 
   useEffect(() => {
     if (id) {
-      dispatch(getPost({ id }))
+      {
+        /* dispatch(getPost({ id })) */
+      }
     }
-    // console.log(page)
-  }, [id])
-
-  const images: Array<string> = []
-
-  const API_DOMAIN = process.env.NEXT_PUBLIC_API_DOMAIN
-
-  const [isOpen, setIsOpen] = useState(false)
-  const [photoIndex, setPhotoIndex] = useState(0)
-  const [tagFilter, setTagFilter] = useState([])
-
-  const setCurrentImage = (index: number) => {
-    setPhotoIndex(index)
-    setIsOpen(true)
-  }
+  }, [dispatch, id])
 
   return (
     <FrontendLayout>
@@ -112,5 +102,29 @@ const Post: FC<InferGetStaticPropsType<typeof getStaticProps>> = () => {
     </FrontendLayout>
   )
 }
+export async function getStaticPaths() {
+  let ids = await postService.getPostIds()
+  const paths = ids.map((id: number) => {
+    return { params: { id: id.toString() } }
+  })
+
+  return {
+    paths,
+    fallback: false,
+  }
+}
+
+export const getStaticProps: GetStaticProps = wrapper.getStaticProps(
+  (store) =>
+    async ({ params }) => {
+      let id = parseInt(params?.id as string)
+      await store.dispatch(getPost({ id }))
+
+      return {
+        props: {},
+        revalidate: false,
+      }
+    }
+)
 
 export default Post
