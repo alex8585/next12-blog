@@ -3,7 +3,7 @@ import queryString from 'query-string'
 import cookie from 'cookie'
 
 const axiosClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -14,7 +14,10 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
   function (config) {
     if (typeof window !== 'undefined') {
-      const token = cookie.parse(document.cookie).token
+      let token: string | null = cookie.parse(document.cookie).token
+      if (!token) {
+        token = localStorage.getItem('token')
+      }
       const auth = token ? `Bearer ${token}` : ''
       config.headers!.Authorization = auth
     }

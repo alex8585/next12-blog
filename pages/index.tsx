@@ -25,9 +25,14 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import AgricultureIcon from '@mui/icons-material/Agriculture'
 import FrontendLayout from '../components/FrontendLayout'
 
+import axiosClient from '../services/axiosClient'
+
+import axios from '../services/axios'
+
 import CardMedia from '@mui/material/CardMedia'
 import CardActions from '@mui/material/CardActions'
 import { useRouter } from 'next/router'
+import { useAuth } from '../hooks/auth'
 const perPage = 6
 const Home: FC<InferGetStaticPropsType<typeof getStaticProps>> = () => {
   const dispatch = useAppDispatch()
@@ -51,17 +56,17 @@ const Home: FC<InferGetStaticPropsType<typeof getStaticProps>> = () => {
     setIsOpen(true)
   }
 
-  // @ts-ignore
-  //const handleChangePage = async (
-  //  event: ChangeEvent<unknown>,
-  //  value: number
-  //) => {
-  //  await dispatch(await getPosts({ page: value, perPage }))
-  //}
-
-  {
-    /* console.log(posts) */
+  const { user } = useAuth({ loginUrl: 'login' })
+  if (user) {
+    console.log(user)
   }
+
+  useEffect(() => {
+    ;(async () => {
+      //      axiosClient.defaults.baseURL = 'http://local-next-lara.com'
+    })()
+  }, [])
+
   const handleOpenPost = (id: number) => {
     router.push(`/post/${id}`)
   }
